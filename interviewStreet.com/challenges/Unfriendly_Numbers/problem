@@ -1,0 +1,25 @@
+There is one friendly number and N unfriendly numbers. We want to find how many numbers are there which exactly divide the friendly number, but does not divide any of the unfriendly numbers.
+
+Input Format:
+The first line of input contains two numbers N and K seperated by spaces. N is the number of unfriendly numbers, K is the friendly number.
+The second line of input contains N space separated unfriendly numbers.
+ 
+Output Format:
+Output the answer in a single line.
+ 
+Constraints:
+1 <= N <= 10^6
+1 <= K <= 10^13
+1 <= unfriendly numbers <= 10^18
+ 
+Sample Input:
+8 16
+2 5 7 4 3 8 3 18
+ 
+Sample Output:
+1
+ 
+Explanation :
+Divisors of the given friendly number 16, are { 1, 2, 4, 8, 16 } and the unfriendly numbers are {2, 5, 7, 4, 3, 8, 3, 18}. Now 1 divides all unfriendly numbers, 2 divide 2, 4 divide 4, 8 divide 8 but 16 divides none of them. So only one number exists which divide the friendly number but does not divide any of the unfriendly numbers. So the answer is 1.   
+
+

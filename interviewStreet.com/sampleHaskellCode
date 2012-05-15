@@ -1,0 +1,27 @@
+And Haskell solution is:
+---------------------------------
+import Data.Char
+
+main=do putStr  "Test Cases"; 
+    a<-getChar
+    --b<-getChar
+        apply (digitToInt a)
+
+apply n|n==0=putStrLn " "
+       |otherwise=do putStr " testcaseNo repeatingNo string" ;
+             a<-getLine
+             repeatch a
+             apply (n-1)
+repeatch l=printch (digitToInt (l!!2)) (digitToInt (l!!2))(l!!0) (drop 4 l) []
+
+
+printch n m y [] l=putStrLn (show (y:' ':l))
+printch n m y (x:xs) l|n==0=printch m m y xs l
+              |otherwise=printch (n-1) m y (x:xs) (l++[x])
+
+
+--n and m are repeatation no
+--y is data set no
+--last list in printch is output list
+--digitToInt function is used to convert char to int
+
