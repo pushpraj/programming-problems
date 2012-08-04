@@ -2,14 +2,13 @@
 import Data.List
 import Debug.Trace
 
-shuffle [] _ mult = trace ("shuffle: def:" ++ show mult)  mult
-shuffle list@(x:xs) maxVal mult | x > maxVal = trace ("shuffle base:" ++ show maxVal ++ show mult ++ show list ) 0
-				| otherwise  = trace ("shuffle: " ++ show maxVal ++ show mult ++ show list ) ( shuffle xs (maxVal + 1) (mult * (length takeList)))
+shuffle [] _ mult = mult
+shuffle list@(x:xs) maxVal mult | x > maxVal = 0
+				| otherwise  = ( shuffle xs (maxVal + 1) (rem (mult * (length takeList)) 1000000007))
 				     where
 				  	(takeList, restList) = span (<= maxVal) list
-				  	takeListLength = length takeList
 
-shuffleHelper list = trace ("helper: "++ show list ++ ".") (shuffle list 0 1)
+shuffleHelper list = (shuffle list 0 1)
 
 testcase [] = []
 testcase (count : restList) = (shuffleHelper (sort firstN)) : (testcase remainingList)
