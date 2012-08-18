@@ -12,7 +12,10 @@ tag maxTag = NoTag;
 int hashForString(char *word) {
   if (*word == 0)
     return 0;
-  return hashForString (word+1) * 31 + (*word);
+  char ch = *word;
+  if (ch >= 'a' && ch <= 'z')
+    ch = ch -'a' + 'A';
+  return hashForString (word+1) * 31 + ch;
 }
 
 void insertInWordTrie (char* word) {
@@ -20,9 +23,8 @@ void insertInWordTrie (char* word) {
   if (already != NoTag)
     return;
   
-  if (hashSize <= maxTag +1 ) {
-    hashSize += 10;
-    hash = (int *)realloc (hash, sizeof(int)*hashSize);
+  if (hash == NULL ) {
+    hash = (int *)malloc (sizeof(int)*100);
   }
   maxTag++;
   hash[maxTag] = hashForString(word);
@@ -101,6 +103,7 @@ struct queueWordInstance *dupWordInstance( struct queueWordInstance *srcQueue ) 
   dest -> ptr = srcQueue -> ptr;
   dest -> wordTag = srcQueue -> wordTag;
   dest -> next = NULL;
+  return dest;
 }
 
 void copyQueueInstance ( queue *srcQueue, queue **destQueue ) {
@@ -165,8 +168,11 @@ int main() {
     // if atleast one occurence of word is found
     if (currentTagCount == (maxTag +1)) {
       // try to reduce words from left
-      while (tagList[ getHeadTagInQueue(wordQueue) ] > 1 ) {
+      tag headTag = getHeadTagInQueue(wordQueue);
+      while (tagList[ headTag ] > 1 ) {
+        tagList[ headTag ] --;
         deleteHeadInQueue(&wordQueue);
+        headTag = getHeadTagInQueue(wordQueue);
       }
       
       // compare if shortest sub-segment and save accordingly
@@ -177,15 +183,15 @@ int main() {
   }
   
   //print answer
-  char *startStr = wordQueue -> start -> ptr;
-  while (startStr != wordQueue -> end -> ptr) {
+  char *startStr = bestSubSegQueue -> start -> ptr;
+  while (startStr != bestSubSegQueue -> end -> ptr) {
     if (*startStr == 0)
       printf(" ");
     else 
       printf("%c", *startStr);
     startStr ++;
   }
-  printf ("%s",wordQueue ->end -> ptr);
+  printf ("%s",bestSubSegQueue ->end -> ptr);
   return;
 }
 
