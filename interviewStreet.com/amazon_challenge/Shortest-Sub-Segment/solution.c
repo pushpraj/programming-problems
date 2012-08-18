@@ -113,9 +113,22 @@ void copyQueueInstance ( queue *srcQueue, queue **destQueue ) {
   (*destQueue)->length = srcQueue->length;
 }
 
+void getString( char* inputLine ){
+  char c;
+
+  int index = 0;
+  while ( (c= getchar()) != '\n') {
+    if ( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ' ) {
+      inputLine[index] = c;
+      index ++;
+    }
+  }
+  return;
+}
+
 int main() {
   char* inputLine = (char*)malloc(sizeof(char)*200001);
-  gets(inputLine);
+  getString(inputLine);
   
   int wordCount = 0;
   scanf("%d", &wordCount);
