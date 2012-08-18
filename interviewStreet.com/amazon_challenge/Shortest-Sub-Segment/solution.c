@@ -24,7 +24,7 @@ void insertInWordTrie (char* word) {
     return;
   
   if (hash == NULL ) {
-    hash = (int *)malloc (sizeof(int)*100);
+    hash = (int *)malloc (sizeof(int)*1000);
   }
   maxTag++;
   hash[maxTag] = hashForString(word);
