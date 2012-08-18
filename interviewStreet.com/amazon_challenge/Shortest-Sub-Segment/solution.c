@@ -183,6 +183,7 @@ int main() {
       printf(" ");
     else 
       printf("%c", *startStr);
+    startStr ++;
   }
   printf ("%s",wordQueue ->end -> ptr);
   return;
