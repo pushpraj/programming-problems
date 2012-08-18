@@ -5,36 +5,37 @@
 typedef int tag;
 #define NoTag -1
 
-typedef struct wordTrie {
-  char ch;
-  struct wordTrie *nextCharList;
-  int nextCharListCount;
-  int tag;
-} wordTrie;
-
-wordTrie *head = NULL;
+int *hash = NULL;
+int hashSize = 0;
 tag maxTag = NoTag;
 
+int hashForString(char *word) {
+  if (*word == 0)
+    return 0;
+  return hashForString (word+1) * 31 + (*word);
+}
+
 void insertInWordTrie (char* word) {
-  // todo
-  if (head == NULL) {
-    head = (wordTrie *)malloc (sizeof(struct wordTrie));
-    head -> ch = '.';
-    head -> tag = NoTag;
-    head -> nextCharListCount = 0;
-    head -> nextCharList = NULL;
-  }
+  tag already = searchInWordTrie (word);
+  if (already != NoTag)
+    return;
   
-  wordTrie *iter = head;
-  while (*word) {
-    
-    
-    word++;
+  if (hashSize <= maxTag +1 ) {
+    hashSize += 10;
+    hash = (int *)realloc (hash, sizeof(int)*hashSize);
   }
+  maxTag++;
+  hash[maxTag] = hashForString(word);
+  return;
 }
 
 tag searchInWordTrie (char* word) {
-  //todo
+  int i =0;
+  int hashString = hashForString(word);
+  for (i=0; i< maxTag +1; i++) {
+    if (hash[i]==hashString)
+      return i;
+  }
   return NoTag;
 }
 
@@ -45,7 +46,7 @@ struct queueWordInstance {
   struct queueWordInstance *next;
 };
 
-typedef struct {
+typedef struct queue{
   struct queueWordInstance *start;
   struct queueWordInstance *end;
   int length;
@@ -57,7 +58,7 @@ tag getHeadTagInQueue(queue *wordQueue) {
 
 void insertAtEndInQueue(queue **wordQueue, char *iterWord, tag wordTag) {
   if ((*wordQueue) == NULL) {
-    *wordQueue = (queue *)malloc (sizeof (queue));
+    (*wordQueue) = (struct queue *)malloc (sizeof (struct queue));
     memset (*wordQueue, 0, sizeof (queue));
   }
   
@@ -126,8 +127,8 @@ int main() {
     insertInWordTrie (word);
   }
   
-  tag *tagList = (tag *)malloc (sizeof(tag)*maxTag);
-  memset (tagList, 0, sizeof(tag)*maxTag);
+  tag *tagList = (tag *)malloc (sizeof(tag)*(maxTag+1));
+  memset (tagList, 0, sizeof(tag)*(maxTag+1));
   int currentTagCount = 0;
   
   queue *wordQueue = NULL;
@@ -149,7 +150,7 @@ int main() {
     insertAtEndInQueue( &wordQueue, iterWord, wordTag );
     
     // if atleast one occurence of word is found
-    if (currentTagCount == maxTag) {
+    if (currentTagCount == (maxTag +1)) {
       // try to reduce words from left
       while (tagList[ getHeadTagInQueue(wordQueue) ] > 1 ) {
         deleteHeadInQueue(&wordQueue);
@@ -163,14 +164,14 @@ int main() {
   }
   
   //print answer
-  char *startStr = queue -> start -> ptr;
-  while (start != queue -> end -> ptr) {
+  char *startStr = wordQueue -> start -> ptr;
+  while (startStr != wordQueue -> end -> ptr) {
     if (*startStr == 0)
       printf(" ");
     else 
       printf("%c", *startStr);
   }
-  printf ("%s",queue ->end -> ptr);
+  printf ("%s",wordQueue ->end -> ptr);
   return;
 }
 
