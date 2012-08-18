@@ -183,15 +183,19 @@ int main() {
   }
   
   //print answer
-  char *startStr = bestSubSegQueue -> start -> ptr;
-  while (startStr != bestSubSegQueue -> end -> ptr) {
-    if (*startStr == 0)
-      printf(" ");
-    else 
-      printf("%c", *startStr);
-    startStr ++;
+  if (bestSubSegQueue) {
+    char *startStr = bestSubSegQueue -> start -> ptr;
+    while (startStr != bestSubSegQueue -> end -> ptr) {
+      if (*startStr == 0)
+        printf(" ");
+      else 
+        printf("%c", *startStr);
+      startStr ++;
+    }
+    printf ("%s",bestSubSegQueue ->end -> ptr);
+  } else {
+    printf ("NO SUBSEGMENT FOUND");
   }
-  printf ("%s",bestSubSegQueue ->end -> ptr);
   return;
 }
 
