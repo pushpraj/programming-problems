@@ -24,8 +24,13 @@ int connectComponents( int *array, int index, int indexKnown ) {
     return 0;
   }
   
-  actualSet[ directPtr[ array[index] ] ] = -1;
-  directPtr [ array[index] ] = directPtr[ array[indexKnown] ];
+  if (directPtr [ array[index] ] > directPtr[ array[indexKnown] ]) {
+    actualSet[ directPtr[ array[index] ] ] = -1;
+    directPtr [ array[index] ] = directPtr[ array[indexKnown] ];
+  } else if (directPtr [ array[index] ] != directPtr[ array[indexKnown] ]){
+    actualSet[ directPtr[ array[indexKnown] ] ] = -1;
+    directPtr [ array[indexKnown] ] = directPtr[ array[index] ];    
+  }
   return 0;
 }
 
