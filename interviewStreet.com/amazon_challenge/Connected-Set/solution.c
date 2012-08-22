@@ -8,10 +8,25 @@ enum loc {
     center
 };
 
-#define setSize 100000
-int *directPtr, *actualSet, actualSetSize, directPtrSize;
+int maxGroupCount = 2;
+int groupCount = 0;
 
-int connectComponents( int *array, int index, int indexKnown ) {
+void markIndex( int *array, int index ) {  
+  array[index] = maxGroupCount;
+  maxGroupCount ++;
+  groupCount ++;
+}
+
+void mergeIndex( int *array, int size, int index1, int index2 ) {
+  int i =0;
+  groupCount --;
+
+  for (i=0; i< size+2; i++)
+    if (array[index2-i] == array[index1])
+      array[index2-i] = array [index2];
+}
+
+int connectComponents( int *array, int size, int index, int indexKnown ) {
   if (array[index] == 0 ) 
     return 1;
   
@@ -20,26 +35,10 @@ int connectComponents( int *array, int index, int indexKnown ) {
     return 0;
   }
   
-  if ( array[index] == array[indexKnown]) {
-    return 0;
-  }
-  
-  if (directPtr [ array[index] ] > directPtr[ array[indexKnown] ]) {
-    actualSet[ directPtr[ array[index] ] ] = -1;
-    directPtr [ array[index] ] = directPtr[ array[indexKnown] ];
-  } else if (directPtr [ array[index] ] != directPtr[ array[indexKnown] ]){
-    actualSet[ directPtr[ array[indexKnown] ] ] = -1;
-    directPtr [ array[indexKnown] ] = directPtr[ array[index] ];    
+  if ( array[index] != array[indexKnown]) {
+    mergeIndex(array, size, index, indexKnown);
   }
   return 0;
-}
-
-void markIndex( int *array, int index ) {
-  actualSetSize++;
-  actualSet[actualSetSize] = actualSetSize;
-  directPtrSize++;
-  directPtr[directPtrSize] = actualSetSize;
-  array[ index ] = directPtrSize;
 }
 
 void markConnectedComponent ( int *array, int size, int index )
@@ -64,25 +63,25 @@ void markConnectedComponent ( int *array, int size, int index )
             if (locationY == top) {
               // empty
             } else {
-              isNew &= connectComponents( array, index - size + 1, index );
-              isNew &= connectComponents( array, index - size, index );
+              isNew &= connectComponents( array, size, index - size + 1, index );
+              isNew &= connectComponents( array, size, index - size, index );
             }
         else if (locationX==right)
             if (locationY == top) {
-              isNew &= connectComponents( array, index - 1, index );
+              isNew &= connectComponents( array, size, index - 1, index );
             } else {
-              isNew &= connectComponents( array, index - 1, index );
-              isNew &= connectComponents( array, index - size, index );
-              isNew &= connectComponents( array, index - size - 1, index );
+              isNew &= connectComponents( array, size, index - 1, index );
+              isNew &= connectComponents( array, size, index - size, index );
+              isNew &= connectComponents( array, size, index - size - 1, index );
             }
         else 
             if (locationY == top) {
-              isNew &= connectComponents( array, index - 1, index );
+              isNew &= connectComponents( array, size, index - 1, index );
             } else {
-              isNew &= connectComponents( array, index - 1, index );
-              isNew &= connectComponents( array, index - size - 1, index );
-              isNew &= connectComponents( array, index - size, index );
-              isNew &= connectComponents( array, index - size + 1, index );
+              isNew &= connectComponents( array, size, index - 1, index );
+              isNew &= connectComponents( array, size, index - size - 1, index );
+              isNew &= connectComponents( array, size, index - size, index );
+              isNew &= connectComponents( array, size, index - size + 1, index );
             }
     }
   
@@ -91,24 +90,20 @@ void markConnectedComponent ( int *array, int size, int index )
 }
 
 int getComponent(int *array, int size) {
-    int count = 0, i = 0;
-    actualSetSize = -1;
-    directPtrSize = 1;
-    for (i=0; i<size*size; i++)
-        if (array[i]==1){
-            markConnectedComponent( array, size, i);
-       }
-    for (i=0; i<actualSetSize+1; i++)
-      if (actualSet[i]!=-1)
-        count ++;
-    return count;   
+
+  maxGroupCount = 2;
+  groupCount = 0;
+
+  int i = 0;
+  for (i=0; i<size*size; i++)
+    if (array[i]==1)
+      markConnectedComponent( array, size, i);
+  
+  return groupCount;
 }
 
 int main()
 {
-  directPtr = (int *)malloc(sizeof(int)*setSize);
-  actualSet = (int *)malloc(sizeof(int)*setSize);
-
     int size;
     int testcaseCount;
     int *array, i;
